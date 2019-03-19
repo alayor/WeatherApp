@@ -14,11 +14,21 @@ const readline = require('readline').createInterface({
 readline.question(`Give me CSV of location names or postal codes (e.g Atlanta, 76051): `, async (input) => {
   const locations = input.split(',').map(l => l.trim())
   await Bluebird.each(locations, async location => {
-    const result = await findWeather({search: location, degreeType: 'F'})
-    const timezone =  geoTz(result[0].location.lat, result[0].location.long)
-    const time = now.tz(timezone[0]).format('h:mm a z')
-    console.log(`${location}: ${result[0].current.temperature}${result[0].location.degreetype} (${time})`)
+    const weatherAndTime = await getLocationWeatherAndTime(location)
+    console.log(`${weatherAndTime.location}: ${weatherAndTime.weather}F (${weatherAndTime.time})`)
   })
 
   readline.close()
 })
+
+async function getLocationWeatherAndTime(location) {
+  const result = await findWeather({search: location, degreeType: 'F'})
+  const timezone =  geoTz(result[0].location.lat, result[0].location.long)
+  const time = now.tz(timezone[0]).format('h:mm a z')
+
+  return {
+    location,
+    weather: result[0].current.temperature,
+    time
+  }
+}
