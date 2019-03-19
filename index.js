@@ -1,3 +1,4 @@
+const Bluebird = require('bluebird')
 const weather = require('weather-js')
 const util = require('util')
 const findWeather = util.promisify(weather.find)
@@ -8,7 +9,11 @@ const readline = require('readline').createInterface({
 })
 
 readline.question(`Give me CSV of location names or postal codes (e.g Atlanta, 76051): `, async (input) => {
-  const result = await findWeather({search: 'San Francisco, CA', degreeType: 'F'})
-  console.log(`${result[0].current.temperature}${result[0].location.degreetype}`)
+  const locations = input.split(',').map(l => l.trim())
+  await Bluebird.each(locations, async location => {
+    const result = await findWeather({search: location, degreeType: 'F'})
+    console.log(`${location}: ${result[0].current.temperature}${result[0].location.degreetype}`)
+  })
+
   readline.close()
 })
