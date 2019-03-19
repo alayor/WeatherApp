@@ -9,6 +9,6 @@ const readline = require('readline').createInterface({
 
 readline.question(`Give me CSV of location names or postal codes (e.g Atlanta, 76051): `, async (input) => {
   const result = await findWeather({search: 'San Francisco, CA', degreeType: 'F'})
-  console.log(JSON.stringify(result, null, 2))
+  console.log(`${result[0].current.temperature}${result[0].location.degreetype}`)
   readline.close()
 })
