@@ -18,8 +18,8 @@ readline.question(`Give me CSV of location names or postal codes (e.g Atlanta, 7
     const weatherAndTime = await getLocationWeatherAndTime(location)
     console.log(`${weatherAndTime.location}: ${weatherAndTime.weather}${degreeType} (${weatherAndTime.time})`)
   })
-
   readline.close()
+  process.exit()
 })
 
 async function getLocationWeatherAndTime(location) {
@@ -28,7 +28,7 @@ async function getLocationWeatherAndTime(location) {
   const time = now.tz(timezone[0]).format('h:mm a z')
 
   return {
-    location,
+    location: result[0].location.name,
     weather: result[0].current.temperature,
     time
   }
