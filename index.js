@@ -26,7 +26,7 @@ readline.question(`Give me CSV of location names or postal codes (e.g Atlanta, 7
 async function getLocationWeatherAndTime(location) {
   const result = await findWeather({search: location, degreeType: degreeType})
   const timezone = geoTz(result[0].location.lat, result[0].location.long)
-  const time = now.tz(timezone[0]).format('h:mm a z')
+  const time = now.tz(timezone[0]).format('h:mma z')
 
   return {
     location: result[0].location.name,
