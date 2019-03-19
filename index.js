@@ -2,6 +2,9 @@ const Bluebird = require('bluebird')
 const weather = require('weather-js')
 const util = require('util')
 const findWeather = util.promisify(weather.find)
+const geoTz = require('geo-tz')
+const moment = require('moment-timezone')
+const now = moment();
 
 const readline = require('readline').createInterface({
   input: process.stdin,
@@ -12,7 +15,9 @@ readline.question(`Give me CSV of location names or postal codes (e.g Atlanta, 7
   const locations = input.split(',').map(l => l.trim())
   await Bluebird.each(locations, async location => {
     const result = await findWeather({search: location, degreeType: 'F'})
-    console.log(`${location}: ${result[0].current.temperature}${result[0].location.degreetype}`)
+    const timezone =  geoTz(result[0].location.lat, result[0].location.long)
+    const time = now.tz(timezone[0]).format('h:mm a z')
+    console.log(`${location}: ${result[0].current.temperature}${result[0].location.degreetype} (${time})`)
   })
 
   readline.close()
